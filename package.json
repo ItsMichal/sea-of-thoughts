@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/ItsMichal/sea-of-thoughts/issues"
   },
-  "homepage": "https://github.com/ItsMichal/sea-of-thoughts#readme"
+  "homepage": "https://github.com/ItsMichal/sea-of-thoughts#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket-io": "^1.0.0"
+  }
 }
