@@ -1,0 +1,24 @@
+{
+  "name": "sea-of-thoughts",
+  "version": "1.0.0",
+  "description": "HackMIT 2020 - Cat Ears and Phat Tears",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ItsMichal/sea-of-thoughts.git"
+  },
+  "keywords": [
+    "hackathon",
+    "social",
+    "webapp"
+  ],
+  "author": "Michal Bodzianowski, Rebecca Coryell, Taryn Hovenkamp, Jamie Joung",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ItsMichal/sea-of-thoughts/issues"
+  },
+  "homepage": "https://github.com/ItsMichal/sea-of-thoughts#readme"
+}
