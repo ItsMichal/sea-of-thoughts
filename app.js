@@ -48,8 +48,8 @@ io.on('connection', (socket) => {
 
     //When someone sends a Bottle
     socket.on('outgoingBottle', (bottle) =>{
-        console.log('Bottle: ' + bottle);
-        io.emit('incomingBottle', bottle);
+        console.log('Bottle: ' + bottle.senders + " - " + bottle.message);
+        socket.broadcast.emit('incomingBottle', bottle);
     });
 
 });

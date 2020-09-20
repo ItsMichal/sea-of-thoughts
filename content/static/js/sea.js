@@ -128,13 +128,17 @@ function drawAllBottles(width, height){
 }
 //END BOTTLES
 
-
 function titleText(){
-  fill(0);
+  fill(255);
+  textAlign(LEFT);
+  textSize(100/1920 * width);
   textFont('Josefin Sans');
-  text("TEST BITCH", 0,0);
-}
+  noStroke();
+  text("Sea of Thoughts.", width/24, height/6);
+  textSize(40/1920 * width);
+  text("A place to connect. A place to write.\nHackMIT 2020", width/24, height/4.5);
 
+}
 
 
 
@@ -155,57 +159,58 @@ function changeColor() {
   }
 }
 
+//Buttons and stuff
+let writeButton;
+let sendButton;
+let cancelButton;
 let outgoingNameInput; 
 let outgoingMessageInput; 
+let parchmentImg;
+let displayParchment = false;
 
 function setUpTextBoxWrite() 
 {
-  //image(this.bottleImg, this.x, (height/2) + this.y_offset, this.bottleImg.width/6, this.bottleImg.height/6) // for displaying at point 0,0 or sumthin
+  displayParchment = true;
+  
+  textAlign(CENTER);
+  textSize(32);
   text("Write a message and send it out to sea.", width/2, height/4);
   // Create input element 
-  //createCanvas(width/2, height/2);
-  textSize(32);
-
-  outgoingNameInput = createInput('outgoingName'); 
-  outgoingMessageInput = createInput('outgoingMessage');
-
+  
+  
+  
+  outgoingMessageInput.show();
+  outgoingNameInput.show();
+  sendButton.show();
   outgoingMessageInput.position(width/2, height/6);
-  outgoingNameInput.position(width/2, height/2);
-  textAlign(CENTER);
-  rect(width/2, height/2, width/4, height/4);
-  fill(255, 237, 196);
+  outgoingNameInput.position(width/2, height/3);
+  
   
 }
 
-
-
 function setUpTextBoxRead()
 {
-
+  image(parchmentImg, width/2, height/2, parchmentImg.width/6, parchmentImg.height/6) 
   text("You've found a bottle!", width/2, height/4);
-  // Create input element 
-  //createCanvas(width/2, height/2);
   textSize(32);
-  
   
   text(bottle.message, width/2, height/6);
   text(bottle.sender,width/2, height/2);
   textAlign(CENTER);
-  rect(width/2, height/2, width/4, height/3);
-  fill(255, 237, 196);
 }
 
 function makeBottle() {
-  
-  setUpTextBoxWrite();
   if (outgoingMessageInput != "")
   {
     // send it to server
+    user_config.name = outgoingNameInput.value();
+    let newBottle = new Bottle(outgoingMessageInput.value());
+    socket.emit('outgoingBottle', newBottle);
     
   }
   else 
   {
-
+    text("No <3");
   }
   
     //"Enter a message to send:", // temporary text
@@ -282,6 +287,24 @@ function dayOrNight() {
     circle((3*width)/4, height/6, 200);
     
     // #80d2ff
+
+
+    // maybe should be in draw: ??? 
+    // var deltaX = 0;
+    // translate(deltaX, 0):
+    // deltaX++;
+
+    // add clouds:::
+    // noStroke();
+    // ellipsde(100, 100, 30);
+    // ellipse(110,110,30);
+    // ellipse(120,95,50,40);
+    // ellipse(130,105,30);
+    // ellipse(x coordinate, y coordinate, width of ellipse, height of ellipse)
+
+    // if(deltaX + 85 > width) {
+      // deltaX = -145;
+    // }
   }
   
   
@@ -333,10 +356,24 @@ function setup() {
   let message = new Bottle("hi");
   let testBottle = new OceanBottle(true, 10, color(255), message);
   bottles.push(testBottle);
-  testBottle =new OceanBottle(true, 10, color(255), message);
+  testBottle = new OceanBottle(true, 10, color(255), message);
   bottles.push(testBottle);
   testBottle = new OceanBottle(false, -10, color(255), message);
   bottles.push(testBottle);
+
+  parchmentImg = loadImage('/img/parchmentImg.png');
+
+  //Buttons
+  button = createButton("Write a Message");
+  button.position(width/2, height/2);
+  button.mousePressed(setUpTextBoxWrite);
+
+  outgoingNameInput = createInput('outgoingName').hide(); 
+  outgoingMessageInput = createInput('meow').hide();
+  
+  sendButton = createButton("Send Message").hide();
+  sendButton.position(width/3, height/3);
+  sendButton.mousePressed(makeBottle);
 }
 
 //Make sure canvas is full screen
@@ -352,6 +389,14 @@ function windowResized() {
 		stars[i] = new Star();
 	}
    yvalues = new Array(floor(w / xspacing));
+
+   //Resize
+   button.position(width/2, height/2);
+   outgoingMessageInput.position(width/2, height/6);
+   outgoingNameInput.position(width/2, height/3);
+   sendButton.position(width/3, height/3);
+
+   
 }
 
 
@@ -362,11 +407,16 @@ function draw() {
   makeNoisyWave(0);
   strokeWeight(10);
   
+  
   drawAllBottles(width, height);
   makeNoisyWave(70);
   fill(252, 224, 159)
   circle(width/2, height*10.8, height*20);
   titleText();
+
+  if(displayParchment){
+    image(parchmentImg, width/2 - parchmentImg.width*0.9, (2*height)/3 - parchmentImg.height*0.9, parchmentImg.width*1.8, parchmentImg.height*1.8);
+  }
   
 }
 
