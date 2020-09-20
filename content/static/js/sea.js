@@ -502,7 +502,10 @@ function draw() {
   //users list:
   fill(212, 184, 119);
   noStroke(1);
-  text(userString, width/4+20, height-height/10, width, height/10);
+  textFont('Josefin Sans');
+  textAlign(CENTER);
+  textSize(40)
+  text(userString, 0, height-height/10, width, height/10);
 
   
   titleText();
