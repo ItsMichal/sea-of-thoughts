@@ -44,7 +44,7 @@ class OceanBottle{ // for showing bottles in ocean
     this.y_offset = y_offset;
     this.bottle = bottle;
     this.color = color;
-    this.distance = 20;
+    this.distance = 40;
     this.theta = 0;
     this.x = from_left ? -this.distance : width+this.distance
     this.bottleImg = loadImage('/img/SoTBottle.png');
@@ -72,7 +72,10 @@ class OceanBottle{ // for showing bottles in ocean
 
   clicked(){
     //When it's clicked display the message
-
+    console.log();
+    if (!displayParchment && dist(mouseX, mouseY, this.x+this.bottleImg.width/12, (height/2) + this.y_offset + this.bottleImg.height/12) < this.distance){
+      displayBottleMessage(this.bottle);
+    }
   }
 
   //Checks if the Bottle is gone from the screen
@@ -92,6 +95,22 @@ class OceanBottle{ // for showing bottles in ocean
 // END CLASSES ----------------------------------------------------------------------------------------------------------------
 
 
+//AUDIO
+let pianoMusic;
+let penMusic;
+let oceanMusic;
+let musicPlaying = false;
+let playButton;
+let pauseButton;
+// let pauseButton; 
+
+function mousePressed(){
+  for(let h = 0; h < bottles.length; h++){
+    bottles[h].clicked();
+  }
+}
+
+
 // START SOCKET-IO SERVER COMMUNICATION
 // -----------------------------------------------------------------------------------------------------------------------------
 
@@ -103,7 +122,7 @@ socket.on('incomingBottle', (bottle) => {
     //do something with the bottle
 
     //Random from left or right
-    let from_left = random(0,1) == 0; // 50/50 chance
+    let from_left = random(0,2) == 0; // 50/50 chance
     bottles.push(new OceanBottle(from_left, random(-10, 10), color(255), bottle));
   
 });
@@ -170,6 +189,7 @@ let displayParchment = false;
 
 function setUpTextBoxWrite() 
 {
+  writeButton.hide();
   displayParchment = true;
   
   textAlign(CENTER);
@@ -182,21 +202,26 @@ function setUpTextBoxWrite()
   outgoingMessageInput.show();
   outgoingNameInput.show();
   sendButton.show();
+  cancelButton.show();
   outgoingMessageInput.position(width/2, height/6);
   outgoingNameInput.position(width/2, height/3);
   
   
 }
 
-function setUpTextBoxRead()
+
+let bottleMsgShowing;
+let bottleSenderShowing;
+let displayBottleContents = false;
+function setUpTextBoxRead(bottle)
 {
-  image(parchmentImg, width/2, height/2, parchmentImg.width/6, parchmentImg.height/6) 
-  text("You've found a bottle!", width/2, height/4);
-  textSize(32);
+  bottleMsgShowing = bottle.message;
+  bottleSenderShowing = bottle.senders;
+  writeButton.hide();
+  displayParchment = true;
+  displayBottleContents = true;
+  cancelButton.show();
   
-  text(bottle.message, width/2, height/6);
-  text(bottle.sender,width/2, height/2);
-  textAlign(CENTER);
 }
 
 function makeBottle() {
@@ -213,16 +238,12 @@ function makeBottle() {
     text("No <3");
   }
   
-    //"Enter a message to send:", // temporary text
-    //
-    //document.getElementById("message").value; //the text inside message if message was a text field
-    //document.getElementById("canvas").asdjhasdkj.asdkjashdkjas = message text
-
+  hideEverything();
 }
 
-function displayBottleMessage()
+function displayBottleMessage(bottle)
 {
-  setUpTextBoxRead();
+  setUpTextBoxRead(bottle);
 }
 
 function requestBottle() {
@@ -230,16 +251,6 @@ function requestBottle() {
     
 }
 
-// let bottleHere = {
-//     "bottle": bottle,
-//     // other stuff to send out??
-// }
-
-// let messageSent = {
-//     "writeMsg": "Enter a message to be sent:", 
-//     "outgoingMessage": outgoingBottle,
-//     socket.emit('outgoingBottle', bottleHere);
-// }
 
 let incomingBottle = {
     "messageInBottle": {}
@@ -310,34 +321,50 @@ function dayOrNight() {
   
 }
 
-// function onInput()
-// {
-//   clear();
-//   fill(0,0,0); // black text
-//   text(this.value(), 
-// }
 
-function parchment(){
-  // createCanvas(width/2, height/2);
-  background(15, 10, 100);
-  10+ Math.random() * 5;
-  const NUM_DOTS = 400;
-  for(let i = 0; i < NUM_DOTS; i++)
-  {
-    let paperX = Math.random() * 20;
-    let paperY = Math.random() * 20;
-    //p5.ellipse(x, y, 10, 10);
-    let theta = Math.random() * 2 * Math.PI;
-    let segmentLength = Math.random() * 5+2; 
-    let paperX2 = Math.cos(theta) * segmentLength + paperX;
-    let paperY2 = Math.sin(theta) * segmentLength + paperY;
-    parchmentStroke();
+function hideEverything() { // called with the cancel button to hide
+  // hide all buttons and text fields
+  outgoingMessageInput.hide();
+  outgoingNameInput.hide();
+  sendButton.hide();
+  cancelButton.hide();
+  writeButton.show();
+  // set parchment display to false
+  displayParchment = false;
+  displayBottleContents = false;
+  
+}
+
+function playPause(){
+  if(musicPlaying){
+    pianoMusic.stop();
+    oceanMusic.stop();
+    playButton.show();
+    pauseButton.hide();
+    musicPlaying = false;
+  }else{
+    oceanMusic.setVolume(0.3);
+    pianoMusic.setVolume(0.5);
+    pianoMusic.loop();
+    oceanMusic.loop();
+
+    pauseButton.show();
+    playButton.hide();
+    
+    musicPlaying = true;
   }
 }
 
 
-
 // MAIN CANVAS ---------------------------------------
+
+function preload(){
+  //preload sound
+  //Sound
+  oceanMusic = loadSound("audio/ocean.mp3");
+  pianoMusic = loadSound("audio/piano.mp3");
+}
+
 function setup() { 
   createCanvas(windowWidth, windowHeight); 
 
@@ -364,16 +391,46 @@ function setup() {
   parchmentImg = loadImage('/img/parchmentImg.png');
 
   //Buttons
-  button = createButton("Write a Message");
-  button.position(width/2, height/2);
-  button.mousePressed(setUpTextBoxWrite);
+  writeButton = createButton("Write a Message");
+  writeButton.position(width/2, height/4);
+  writeButton.size(width/7,height/9);
+  writeButton.class("writeButton");
 
-  outgoingNameInput = createInput('outgoingName').hide(); 
-  outgoingMessageInput = createInput('meow').hide();
+  writeButton.mousePressed(setUpTextBoxWrite);
+  
+  
+  outgoingNameInput = createInput('Enter Name:').hide(); 
+  outgoingMessageInput = createInput('Type your Message:').hide();
+  outgoingNameInput.class("outgoingTextBox");
+  outgoingMessageInput.class("outgoingNameTextBox");
+
   
   sendButton = createButton("Send Message").hide();
-  sendButton.position(width/3, height/3);
-  sendButton.mousePressed(makeBottle);
+  sendButton.position(width/1.7, height/1.3);
+  sendButton.size(width/8, height/8);
+  sendButton.class("sendButton");
+  sendButton.mousePressed(makeBottle);  
+
+  cancelButton = createButton("Cancel").hide();
+  cancelButton.position(width/3.5, height/1.3);
+  cancelButton.size(width/8, height/8);
+  cancelButton.class("cancelButton");
+  cancelButton.mousePressed(hideEverything);
+
+  playButton = createButton("Play").show();
+  playButton.position(0,0);
+  playButton.size(width/12, height/12);
+  playButton.mousePressed(playPause);
+  playButton.class("playButtonStyle");
+
+  pauseButton = createButton("Pause").hide();
+  pauseButton.position(0,0);
+  pauseButton.size(width/12, height/12);
+  pauseButton.mousePressed(playPause);
+  pauseButton.class("pauseButtonStyle");
+
+  
+  
 }
 
 //Make sure canvas is full screen
@@ -391,10 +448,12 @@ function windowResized() {
    yvalues = new Array(floor(w / xspacing));
 
    //Resize
-   button.position(width/2, height/2);
+   writeButton.position(width/2, height/2);
    outgoingMessageInput.position(width/2, height/6);
    outgoingNameInput.position(width/2, height/3);
    sendButton.position(width/3, height/3);
+   cancelButton.position(width/3, height/2);
+   playButton.position(0,0);
 
    
 }
@@ -416,6 +475,16 @@ function draw() {
 
   if(displayParchment){
     image(parchmentImg, width/2 - parchmentImg.width*0.9, (2*height)/3 - parchmentImg.height*0.9, parchmentImg.width*1.8, parchmentImg.height*1.8);
+  }
+
+  if(displayBottleContents){
+    textAlign(CENTER);
+    textSize(32);
+    textFont('Architects Daughter');
+    fill(0);
+    text("You've found a bottle!", width/2, height/3.5);
+    text(bottleMsgShowing, width/2, height/2.8);
+    text(bottleSenderShowing,width/1.6, height/1.4);
   }
   
 }

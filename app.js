@@ -37,7 +37,7 @@ function randomBottle(){
 //Connection event (to listen for incoming sockets and log onto console after)
 io.on('connection', (socket) => {
 
-    console.log('a user connected');
+    //console.log('a user connected');
 
     //TODO- Send them 3 different bottles if array is larger than 3
 

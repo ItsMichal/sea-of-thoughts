@@ -8,9 +8,78 @@ html, body { width:100%; height:100%; overflow: hidden;} /* full screen */
 /*canvas { display:block; } /* remove scrollbars?? */
 
 
-/* canvas bounds*/
+/* canvas bounds
 #canvas {
     width: 100%;
     height: 100%;
     background: #d2e1fc;
+} */
+
+.writeButton{
+    display: flex;
+    background-color: rgba(0,0,0,0);
+    border: 0!important;
+    color: #ffffff;
+    font-family: 'Josefin Sans';
+    font-size: 3em;
+    overflow-wrap: break-word;
+}
+
+.sendButton{
+    display: flex;
+    background-color: rgba(0,0,0,0);
+    border: 0;
+    color: #000000;
+    font-family: 'Josefin Sans';
+    font-size: 2em;
+    overflow-wrap: break-word;
+    
+}
+
+.cancelButton{
+    display: flex;
+    background-color: rgba(0,0,0,0);
+    border: 0;
+    color: #000000;
+    font-family: 'Josefin Sans';
+    font-size: 2em;
+    overflow-wrap: break-word;
+}
+
+.outgoingTextBox{
+    display: flex;
+    background-color: rgba(0,0,0,0);
+    border: 0;
+    color: #000000;
+    font-family: 'Architects Daughter';
+    font-size: 1.5em;
+    overflow-wrap: break-word;
+}
+
+.outgoingNameTextBox{
+    display: flex;
+    background-color: rgba(0,0,0,0);
+    border: 0;
+    color: #000000;
+    font-family: 'Architects Daughter';
+    font-size: 1.5em;
+    overflow-wrap: break-word;
+}
+
+.playButtonStyle{
+    display: flex;
+    background-color: rgba(0,0,0,0);
+    border: 0;
+    color: #ffffff;
+    font-family: 'Josefin Sans';
+    font-size: 1.5em;
+}
+
+.pauseButtomStyle{
+    display: flex;
+    background-color: rgba(0,0,0,0);
+    border: 0;
+    color: #ffffff;
+    font-family: 'Josefin Sans';
+    font-size: 1.5em;
 }
