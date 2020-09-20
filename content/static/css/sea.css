@@ -1,6 +1,9 @@
+
+
+
 * { margin:0; padding:0; }
 
-html, body { width:100%; height:100%; } /* full screen */
+html, body { width:100%; height:100%; overflow: hidden;} /* full screen */
 
 /*canvas { display:block; } /* remove scrollbars?? */
 
@@ -9,7 +12,5 @@ html, body { width:100%; height:100%; } /* full screen */
 #canvas {
     width: 100%;
     height: 100%;
-    background: #d2f8fc;
+    background: #d2e1fc;
 }
-
-#
