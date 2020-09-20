@@ -13,7 +13,7 @@ let user_config = {
 class Star {
 	constructor() {
 		this.x = random(width);
-		this.y = random(height);
+		this.y = random(height/2);
 		this.size = random(0.25, 3);
 		this.t = random(TAU);
 	}
@@ -40,11 +40,14 @@ class Bottle{
 class OceanBottle{ // for showing bottles in ocean
   constructor (from_left, y_offset, color, bottle){
     this.from_left = from_left;
+    ;
     this.y_offset = y_offset;
     this.bottle = bottle;
     this.color = color;
     this.distance = 20;
     this.theta = 0;
+    this.x = from_left ? -this.distance : width+this.distance
+    this.bottleImg = loadImage('/img/SoTBottle.png');
   }
 
   display(width, height){
@@ -53,21 +56,17 @@ class OceanBottle{ // for showing bottles in ocean
     let wunit = (width)/1920;
     let hunit = (height)/1080;
     fill(this.color);
-    circle(this.x , (height/2) + this.y_offset, 100);
+    // circle(this.x , , 20);
 
-    let bottleImg = loadImage('content/img/bottleSoT.png'); // load the image from the drawing
+     // load the image from the drawing
     // to actually display the image:
-    // image(bottleImg, 0,0) // for displaying at point 0,0 or sumthin
+    image(this.bottleImg, this.x, (height/2) + this.y_offset, this.bottleImg.width/6, this.bottleImg.height/6) // for displaying at point 0,0 or sumthin
     // image(bottleImg, x coordinate, y coordinate, img.width, img.height)
-    // can also load and display it all at once:
-    // loadImage('location', img => {
-        // image(bottleImg, 0, 0);
-    // })
   }
 
   move(){
     //Move the bottle one frame, side to side
-    this.x += (this.from_left) ? 0.2 : -0.2
+    this.x += (this.from_left) ? 0.3 : -0.3
 
   }
 
@@ -78,7 +77,7 @@ class OceanBottle{ // for showing bottles in ocean
 
   //Checks if the Bottle is gone from the screen
   gone(width, height){
-    if(this.x > width+this.distance || this.x < 0-this.distance || this.y > height+this.distance || this.y < -this.distance)
+    if(this.x > width+(this.distance+10) || this.x < 0-(this.distance+10) || this.y > height+(this.distance+10) || this.y < -(this.distance+10))
     {
       return true;
     }
@@ -112,6 +111,35 @@ socket.on('incomingBottle', (bottle) => {
 // -----------------------------------------------------------------------------------------------------------------------------
 // END SOCKET-IO SERVER COMMUNICATION
 
+
+//BOTTLES ----------------------
+let testBottle; 
+let bottles = [];
+
+//Checks if the Bottles are gone, if not, draws Bottle
+function drawAllBottles(width, height){
+  for(var i = 0; i < bottles.length; i++){
+    if(!bottles[i].gone(width, height)){
+      bottles[i].display(width, height);
+    }
+
+      
+  }
+}
+//END BOTTLES
+
+
+function titleText(){
+  fill(0);
+  textFont('Josefin Sans');
+  text("TEST BITCH", 0,0);
+}
+
+
+
+
+
+
 function changeColor() {
   var getTime = new Date(); // for day/night cycle?
   if(getTime.getHours() < 7 && getTime.getHours() > 20)
@@ -132,9 +160,10 @@ let outgoingMessageInput;
 
 function setUpTextBoxWrite() 
 {
+  //image(this.bottleImg, this.x, (height/2) + this.y_offset, this.bottleImg.width/6, this.bottleImg.height/6) // for displaying at point 0,0 or sumthin
   text("Write a message and send it out to sea.", width/2, height/4);
   // Create input element 
-  createCanvas(width/2, height/2);
+  //createCanvas(width/2, height/2);
   textSize(32);
 
   outgoingNameInput = createInput('outgoingName'); 
@@ -152,9 +181,10 @@ function setUpTextBoxWrite()
 
 function setUpTextBoxRead()
 {
+
   text("You've found a bottle!", width/2, height/4);
   // Create input element 
-  createCanvas(width/2, height/2);
+  //createCanvas(width/2, height/2);
   textSize(32);
   
   
@@ -218,9 +248,6 @@ let messageReceived = {
     
 };
 
-
-
-
 var stars = [];
 
 function dayOrNight() {
@@ -260,28 +287,15 @@ function dayOrNight() {
   
 }
 
-
-
-
-
 // function onInput()
 // {
 //   clear();
 //   fill(0,0,0); // black text
 //   text(this.value(), 
- 
-
 // }
 
-
-function parchmentStroke(){
-  BASE_H,
-  BASE_S - Math.random() * 5,
-  BASE_B - Math.random() * 8,
-  Math.random() * 10 + 75
-}
-
 function parchment(){
+  // createCanvas(width/2, height/2);
   background(15, 10, 100);
   10+ Math.random() * 5;
   const NUM_DOTS = 400;
@@ -295,35 +309,33 @@ function parchment(){
     let paperX2 = Math.cos(theta) * segmentLength + paperX;
     let paperY2 = Math.sin(theta) * segmentLength + paperY;
     parchmentStroke();
-    p5.line(paperX, paperY, paperX2, paperY2);
-    
   }
-
 }
 
-let testBottle; 
-let bottles = [];
 
+
+// MAIN CANVAS ---------------------------------------
 function setup() { 
   createCanvas(windowWidth, windowHeight); 
 
   //For Wave
-  w = width + 100;
+  w = width + 180;
   dx = (TWO_PI / period) * xspacing;
   dx2 = (TWO_PI / period2) * xspacing;
   dx3 = (TWO_PI / period3) * xspacing;
-  for (var i = 0; i < 1000; i++) {
+  for (var i = 0; i < 100; i++) {
 		stars[i] = new Star();
 	}
 
   yvalues = new Array(floor(w / xspacing));
 
   //testbottle
-  let testBottle = new OceanBottle(true, width/2, height/2, color(255));
+  let message = new Bottle("hi");
+  let testBottle = new OceanBottle(true, 10, color(255), message);
   bottles.push(testBottle);
-  testBottle = new OceanBottle(true, width/7, height/2, color(255));
+  testBottle =new OceanBottle(true, 10, color(255), message);
   bottles.push(testBottle);
-  testBottle = new OceanBottle(false, (3*width)/4, height/2 + 20, color(255));
+  testBottle = new OceanBottle(false, -10, color(255), message);
   bottles.push(testBottle);
 }
 
@@ -331,7 +343,7 @@ function setup() {
 function windowResized() { 
   resizeCanvas(windowWidth, windowHeight); 
    //For Wave
-   w = width + 100;
+   w = width + 180;
    dx = (TWO_PI / period) * xspacing;
    dx2 = (TWO_PI / period2) * xspacing;
    dx3 = (TWO_PI / period3) * xspacing;
@@ -347,27 +359,26 @@ function draw() {
   background(151, 203, 220);
   
   dayOrNight();
-  makeNoisyWave();
+  makeNoisyWave(0);
   strokeWeight(10);
+  
+  drawAllBottles(width, height);
+  makeNoisyWave(70);
   fill(252, 224, 159)
   circle(width/2, height*10.8, height*20);
-  drawAllBottles(width, height);
+  titleText();
   
 }
 
+//END MAIN CANVAS ---------------------------------------
 
-//Checks if the Bottles are gone, if not, draws Bottle
-function drawAllBottles(width, height){
-  for(var i = 0; i < bottles.length; i++){
-    if(!bottles[i].gone(width, height))
-      bottles[i].display(width, height);
-  }
-}
+
+
 
 
 //----------------------------------------------------------------------WAVES
 //Based off of https://p5js.org/examples/math-sine-wave.html
-let xspacing = 60; // Distance between each horizontal location
+let xspacing = 90; // Distance between each horizontal location
 let w; // Width of entire wave
 let theta = 0.0; // Start angle at 0
 let theta2 = 0.0; // Start angle at 0
@@ -385,7 +396,7 @@ let dx; // Value for incrementing x
 let dx2;
 let dx3;
 let yvalues; // Using an array to store height values for the wave
-function makeNoisyWave(){
+function makeNoisyWave(offset){
     // Increment theta (try different values for
   // 'angular velocity' here)
   theta += 0.003;
@@ -404,24 +415,23 @@ function makeNoisyWave(){
   let x3 = theta*0.5+2;
 
   for (let i = 0; i < yvalues.length; i++) {
-    yvalues[i] = sin(x) * (amplitude) ;
+    yvalues[i] = sin(x) * (amplitude) + offset;
     x += dx;
   }
   fill(0, 69, 129, 255);
   renderWave();
   for (let i = 0; i < yvalues.length; i++) {
-    yvalues[i] = sin(x2) * (amplitude2) + (sin(x) * (amplitude))*0.2 + 5;
+    yvalues[i] = sin(x2) * (amplitude2) + (sin(x) * (amplitude))*0.2 + 5 + offset;
     x2 += dx2;
   }
   fill(0, 69, 129, 255);
-  
   renderWave();
-  for (let i = 0; i < yvalues.length; i++) {
-    yvalues[i] = sin(x3) * (amplitude3) + 10;
-    x3 += dx3;
-  }
-  fill(0, 69, 129, 255);
-  renderWave();
+  // for (let i = 0; i < yvalues.length; i++) {
+  //   yvalues[i] = sin(x3) * (amplitude3) + 10 + offset;
+  //   x3 += dx3;
+  // }
+  // fill(0, 69, 129, 255);
+  // renderWave();
 }
 
 function renderWave() {
@@ -445,8 +455,4 @@ function renderWave() {
   endShape(CLOSE);
   
 }
-
-
-
-//JSON uses colon not equals
-
+//END WAVES ------------------------------------------------------
