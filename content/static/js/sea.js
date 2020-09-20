@@ -3,7 +3,7 @@
 const socket = io(); // you don't actually need the url for now, it works magically -Michal 
 
 let user_config = {
-  "name": "Somebody"
+  "name": "a friend"
 };
 
 //START CLASSES ----------------------------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ class OceanBottle{ // for showing bottles in ocean
   constructor (from_left, y_offset, color, bottle){
     this.from_left = from_left;
     ;
-    this.y_offset = y_offset;
+    this.y_offset = y_offset+10;
     this.bottle = bottle;
     this.color = color;
     this.distance = 40;
@@ -57,10 +57,13 @@ class OceanBottle{ // for showing bottles in ocean
     let hunit = (height)/1080;
     fill(this.color);
     // circle(this.x , , 20);
-
+    this.theta+=0.01;
+    //rotate(sin(this.theta)/10);
      // load the image from the drawing
     // to actually display the image:
     image(this.bottleImg, this.x, (height/2) + this.y_offset, this.bottleImg.width/6, this.bottleImg.height/6) // for displaying at point 0,0 or sumthin
+
+    //rotate(-sin(this.theta)/10);
     // image(bottleImg, x coordinate, y coordinate, img.width, img.height)
   }
 
@@ -75,12 +78,14 @@ class OceanBottle{ // for showing bottles in ocean
     console.log();
     if (!displayParchment && dist(mouseX, mouseY, this.x+this.bottleImg.width/12, (height/2) + this.y_offset + this.bottleImg.height/12) < this.distance){
       displayBottleMessage(this.bottle);
+      corkSFX.setVolume(0.3);
+      corkSFX.play();
     }
   }
 
   //Checks if the Bottle is gone from the screen
   gone(width, height){
-    if(this.x > width+(this.distance+10) || this.x < 0-(this.distance+10) || this.y > height+(this.distance+10) || this.y < -(this.distance+10))
+    if(this.x > width+(this.distance+10) || this.x < 0-(this.distance+10))
     {
       return true;
     }
@@ -123,7 +128,7 @@ socket.on('incomingBottle', (bottle) => {
 
     //Random from left or right
     let from_left = random(0,2) == 0; // 50/50 chance
-    bottles.push(new OceanBottle(from_left, random(-10, 10), color(255), bottle));
+    bottles.push(new OceanBottle(from_left, random(-50, 50), color(255), bottle));
   
 });
 
@@ -159,10 +164,6 @@ function titleText(){
 
 }
 
-
-
-
-
 function changeColor() {
   var getTime = new Date(); // for day/night cycle?
   if(getTime.getHours() < 7 && getTime.getHours() > 20)
@@ -196,17 +197,10 @@ function setUpTextBoxWrite()
   textSize(32);
   text("Write a message and send it out to sea.", width/2, height/4);
   // Create input element 
-  
-  
-  
   outgoingMessageInput.show();
   outgoingNameInput.show();
   sendButton.show();
   cancelButton.show();
-  outgoingMessageInput.position(width/2, height/6);
-  outgoingNameInput.position(width/2, height/3);
-  
-  
 }
 
 
@@ -230,6 +224,8 @@ function makeBottle() {
     // send it to server
     user_config.name = outgoingNameInput.value();
     let newBottle = new Bottle(outgoingMessageInput.value());
+    splashSFX.setVolume(0.4);
+    splashSFX.play();
     socket.emit('outgoingBottle', newBottle);
     
   }
@@ -355,14 +351,26 @@ function playPause(){
   }
 }
 
+function keyPressed(){
+  if(displayParchment && !displayBottleContents){
+    penSFX.setVolume(0.3);
+    penSFX.rate(Math.random()/4+0.75+0.125);
+    penSFX.play();
+  }
+}
+
 
 // MAIN CANVAS ---------------------------------------
 
 function preload(){
-  //preload sound
+  //preload soundW
   //Sound
   oceanMusic = loadSound("audio/ocean.mp3");
   pianoMusic = loadSound("audio/piano.mp3");
+  penSFX = loadSound("audio/pen.mp3");
+  splashSFX = loadSound("audio/splash.mp3");
+  corkSFX = loadSound("audio/cork.mp3");
+  
 }
 
 function setup() { 
@@ -380,13 +388,16 @@ function setup() {
   yvalues = new Array(floor(w / xspacing));
 
   //testbottle
-  let message = new Bottle("hi");
-  let testBottle = new OceanBottle(true, 10, color(255), message);
+  let message1 = new Bottle('Welcome to Sea of Thoughts!');
+  let message2 = new Bottle('"Be the change that you want to see in the world!"');
+  let message3 = new Bottle('The world is better because you are in it.');
+  let testBottle = new OceanBottle(true, 25, color(255), message1);
   bottles.push(testBottle);
-  testBottle = new OceanBottle(true, 10, color(255), message);
+  testBottle = new OceanBottle(true, -25, color(255), message2);
+  setTimeout(()=>{bottles.push(testBottle);}, 5000);
+  testBottle = new OceanBottle(false, -10, color(255), message3);
   bottles.push(testBottle);
-  testBottle = new OceanBottle(false, -10, color(255), message);
-  bottles.push(testBottle);
+  
 
   parchmentImg = loadImage('/img/parchmentImg.png');
 
@@ -399,31 +410,35 @@ function setup() {
   writeButton.mousePressed(setUpTextBoxWrite);
   
   
-  outgoingNameInput = createInput('Enter Name:').hide(); 
-  outgoingMessageInput = createInput('Type your Message:').hide();
-  outgoingNameInput.class("outgoingTextBox");
-  outgoingMessageInput.class("outgoingNameTextBox");
+  outgoingNameInput = createInput().attribute('placeholder', "Enter name:").hide(); 
+  outgoingNameInput.class("outgoingNameTextBox");
+  outgoingNameInput.position(width/2 - width/10, (3*height)/4 - height/70);
+  outgoingNameInput.size(width/5, height/35);
 
+  outgoingMessageInput = createInput().attribute('placeholder', "Type your message:").hide(); 
+  outgoingMessageInput.class("outgoingTextBox");
+  outgoingMessageInput.position(width/2 - width/8, height/2-height/6);
+  outgoingMessageInput.size(width/4, height/3);
   
   sendButton = createButton("Send Message").hide();
-  sendButton.position(width/1.7, height/1.3);
-  sendButton.size(width/8, height/8);
+  sendButton.position(width/2 - width/20, (7*height/8)-(3*height/32));
+  sendButton.size(width/10, height/8);
   sendButton.class("sendButton");
   sendButton.mousePressed(makeBottle);  
 
   cancelButton = createButton("Cancel").hide();
-  cancelButton.position(width/3.5, height/1.3);
-  cancelButton.size(width/8, height/8);
+  cancelButton.position(width/2 - width/20, (7*height/8));
+  cancelButton.size(width/10, height/8);
   cancelButton.class("cancelButton");
   cancelButton.mousePressed(hideEverything);
 
-  playButton = createButton("Play").show();
+  playButton = createButton("Play Music").show();
   playButton.position(0,0);
   playButton.size(width/12, height/12);
   playButton.mousePressed(playPause);
   playButton.class("playButtonStyle");
 
-  pauseButton = createButton("Pause").hide();
+  pauseButton = createButton("Pause Music").hide();
   pauseButton.position(0,0);
   pauseButton.size(width/12, height/12);
   pauseButton.mousePressed(playPause);
@@ -448,12 +463,20 @@ function windowResized() {
    yvalues = new Array(floor(w / xspacing));
 
    //Resize
-   writeButton.position(width/2, height/2);
-   outgoingMessageInput.position(width/2, height/6);
-   outgoingNameInput.position(width/2, height/3);
-   sendButton.position(width/3, height/3);
-   cancelButton.position(width/3, height/2);
+   writeButton.position(width/2, height/4);
+   writeButton.size(width/7,height/9);
+   outgoingNameInput.position(width/2 - width/10, (3*height)/4 - height/70);
+   outgoingNameInput.size(width/5, height/35);
+   outgoingMessageInput.position(width/2 - width/8, height/2-height/6);
+   outgoingMessageInput.size(width/4, height/3);
+   sendButton.position(width/2 - width/20, (7*height/8)-(3*height/32));
+   sendButton.size(width/10, height/8);
+   cancelButton.position(width/2 - width/20, (7*height/8));
+   cancelButton.size(width/10, height/8);
    playButton.position(0,0);
+   playButton.size(width/12, height/12);
+   pauseButton.position(0,0);
+   pauseButton.size(width/12, height/12);
 
    
 }
@@ -463,14 +486,18 @@ function draw() {
   background(151, 203, 220);
   
   dayOrNight();
-  makeNoisyWave(0);
+  makeNoisyWave(0, false, 1);
   strokeWeight(10);
   
   
   drawAllBottles(width, height);
-  makeNoisyWave(70);
+  makeNoisyWave(100, true, 2);
+  makeNoisyWave(200, true, 3);
+
   fill(252, 224, 159)
-  circle(width/2, height*10.8, height*20);
+  circle(width/2, height*10.8, height*20); //beach sand
+  
+  
   titleText();
 
   if(displayParchment){
@@ -479,12 +506,17 @@ function draw() {
 
   if(displayBottleContents){
     textAlign(CENTER);
-    textSize(32);
+    
     textFont('Architects Daughter');
     fill(0);
-    text("You've found a bottle!", width/2, height/3.5);
-    text(bottleMsgShowing, width/2, height/2.8);
-    text(bottleSenderShowing,width/1.6, height/1.4);
+    textSize(24);
+    text("You've found a bottle!", width/2, height/2-height/5);
+    textSize(30);
+    text(bottleMsgShowing, width/2 - width/8, height/2-height/6, width/4, height/2);
+    textSize(32);
+    textStyle(BOLD);
+    text("-"+bottleSenderShowing,width/2 - width/10, (5*height)/6 - height/70, width/5, height/10);
+    textStyle(NORMAL);
   }
   
 }
@@ -515,7 +547,7 @@ let dx; // Value for incrementing x
 let dx2;
 let dx3;
 let yvalues; // Using an array to store height values for the wave
-function makeNoisyWave(offset){
+function makeNoisyWave(offset, transparent, addy){
     // Increment theta (try different values for
   // 'angular velocity' here)
   theta += 0.003;
@@ -529,22 +561,22 @@ function makeNoisyWave(offset){
   
 
   // For every x value, calculate a y value with sine function
-  let x = theta;
-  let x2 = theta2+1;
-  let x3 = theta*0.5+2;
+  let x = theta+addy;
+  let x2 = theta2+1+addy;
+  let x3 = theta*0.5+2+addy;
 
   for (let i = 0; i < yvalues.length; i++) {
     yvalues[i] = sin(x) * (amplitude) + offset;
     x += dx;
   }
   fill(0, 69, 129, 255);
-  renderWave();
+  renderWave(transparent);
   for (let i = 0; i < yvalues.length; i++) {
     yvalues[i] = sin(x2) * (amplitude2) + (sin(x) * (amplitude))*0.2 + 5 + offset;
     x2 += dx2;
   }
   fill(0, 69, 129, 255);
-  renderWave();
+  renderWave(transparent);
   // for (let i = 0; i < yvalues.length; i++) {
   //   yvalues[i] = sin(x3) * (amplitude3) + 10 + offset;
   //   x3 += dx3;
@@ -553,11 +585,13 @@ function makeNoisyWave(offset){
   // renderWave();
 }
 
-function renderWave() {
+function renderWave(transparent) {
   
   stroke(255);
-  strokeWeight(sin(theta)*4 +5);
-  
+  strokeWeight(sin(theta)*4 +7);
+  if(transparent){
+    fill(0, 69, 129, 200);
+  }
   // A simple way to draw the wave with an ellipse at each location
   beginShape()
   for (let x = 0; x < yvalues.length; x++) {

@@ -22,7 +22,6 @@ html, body { width:100%; height:100%; overflow: hidden;} /* full screen */
     color: #ffffff;
     font-family: 'Josefin Sans';
     font-size: 3em;
-    overflow-wrap: break-word;
 }
 
 .sendButton{
@@ -54,6 +53,7 @@ html, body { width:100%; height:100%; overflow: hidden;} /* full screen */
     font-family: 'Architects Daughter';
     font-size: 1.5em;
     overflow-wrap: break-word;
+    text-align: left;
 }
 
 .outgoingNameTextBox{
@@ -63,7 +63,6 @@ html, body { width:100%; height:100%; overflow: hidden;} /* full screen */
     color: #000000;
     font-family: 'Architects Daughter';
     font-size: 1.5em;
-    overflow-wrap: break-word;
 }
 
 .playButtonStyle{
@@ -75,7 +74,7 @@ html, body { width:100%; height:100%; overflow: hidden;} /* full screen */
     font-size: 1.5em;
 }
 
-.pauseButtomStyle{
+.pauseButtonStyle{
     display: flex;
     background-color: rgba(0,0,0,0);
     border: 0;
