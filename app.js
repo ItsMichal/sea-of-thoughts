@@ -5,6 +5,17 @@ var http = require('http').createServer(app);
 var path = require('path');
 var io = require('socket.io')(http);
 
+//Bottle Thing
+class Bottle{
+    constructor(message){
+      this.empty = false;
+      this.message = message;
+      this.timestamp = new Date();
+      this.senders = user_config.name;
+    }
+
+  }
+
 
 //Default Route thoughtssea.com
 app.get('/', (req, res) => {
