@@ -165,7 +165,7 @@ function titleText(){
   noStroke();
   text("Sea of Thoughts.", width/24, height/6);
   textSize(40/1920 * width);
-  text("A place to connect. A place to write.\nHackMIT 2020", width/24, height/4.5);
+  text("A place to connect. A place to express.\nHackMIT 2020", width/24, height/4.5);
 
 }
 
