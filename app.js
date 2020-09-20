@@ -26,23 +26,27 @@ app.get('/', (req, res) => {
 app.use(express.static('content/static'));
 
 //Message array- to be replaced by Database
-let messageArray = [];
 
 
 function randomBottle(){
 
 }
 
+let usersConnected = 0;
 
 //Connection event (to listen for incoming sockets and log onto console after)
 io.on('connection', (socket) => {
 
+    usersConnected++;
     //console.log('a user connected');
+    io.emit('users', "There are " + usersConnected + " thinkers at the Sea of Thoughts.");
 
     //TODO- Send them 3 different bottles if array is larger than 3
 
     socket.on('disconnect', ()=> {
         console.log('user disconnected');
+        io.emit('users', "There are " + usersConnected + " thinkers at the Sea of Thoughts.");
+        usersConnected--;
     });
 
 
