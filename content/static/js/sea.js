@@ -37,7 +37,7 @@ class Bottle{
 }
 
 //Class for the Bottle's 
-class OceanBottle{ // for showing bottles in ocean
+class OceanBottle{ d// for showing bottles in ocean
   constructor (from_left, y_offset, color, bottle){
     this.from_left = from_left;
     ;
@@ -46,7 +46,7 @@ class OceanBottle{ // for showing bottles in ocean
     this.color = color;
     this.distance = 40;
     this.theta = 0;
-    this.x = from_left ? -this.distance : width+this.distance
+    this.x = from_left ? -this.distance-10 : width+this.distance
     this.bottleImg = loadImage('/img/SoTBottle.png');
   }
 
@@ -130,6 +130,11 @@ socket.on('incomingBottle', (bottle) => {
     let from_left = random(0,2) == 0; // 50/50 chance
     bottles.push(new OceanBottle(from_left, random(-50, 50), color(255), bottle));
   
+});
+
+let userString = "Getting User Count...";
+socket.on('users', (usrStrng) =>{
+  userString = usrStrng;
 });
 
 // -----------------------------------------------------------------------------------------------------------------------------
@@ -388,7 +393,7 @@ function setup() {
   yvalues = new Array(floor(w / xspacing));
 
   //testbottle
-  let message1 = new Bottle('Welcome to Sea of Thoughts!');
+  let message1 = new Bottle('Welcome to the Sea of Thoughts!');
   let message2 = new Bottle('"Be the change that you want to see in the world!"');
   let message3 = new Bottle('The world is better because you are in it.');
   let testBottle = new OceanBottle(true, 25, color(255), message1);
@@ -443,9 +448,6 @@ function setup() {
   pauseButton.size(width/12, height/12);
   pauseButton.mousePressed(playPause);
   pauseButton.class("pauseButtonStyle");
-
-  
-  
 }
 
 //Make sure canvas is full screen
@@ -492,11 +494,16 @@ function draw() {
   
   drawAllBottles(width, height);
   makeNoisyWave(100, true, 2);
-  makeNoisyWave(200, true, 3);
+  makeNoisyWave2(200, true, 3);
 
   fill(252, 224, 159)
   circle(width/2, height*10.8, height*20); //beach sand
   
+  //users list:
+  fill(212, 184, 119);
+  noStroke(1);
+  text(userString, width/4+20, height-height/10, width, height/10);
+
   
   titleText();
 
@@ -583,6 +590,38 @@ function makeNoisyWave(offset, transparent, addy){
   // }
   // fill(0, 69, 129, 255);
   // renderWave();
+}
+
+function makeNoisyWave2(offset, transparent, addy){
+  // Increment theta (try different values for
+// 'angular velocity' here)
+theta += 0.003;
+theta2 += -0.003;
+
+
+if(amplitude > amp_max){
+  amplitude=amp_min;
+}
+//amplitude+=0.02
+
+
+// For every x value, calculate a y value with sine function
+let x = theta+addy;
+let x2 = theta2+1+addy;
+let x3 = theta*0.5+2+addy;
+
+for (let i = 0; i < yvalues.length; i++) {
+  yvalues[i] = sin(x) * (amplitude) + offset;
+  x += dx;
+}
+fill(0, 69, 129, 255);
+renderWave(transparent);
+// for (let i = 0; i < yvalues.length; i++) {
+//   yvalues[i] = sin(x3) * (amplitude3) + 10 + offset;
+//   x3 += dx3;
+// }
+// fill(0, 69, 129, 255);
+// renderWave();
 }
 
 function renderWave(transparent) {
