@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/ItsMichal/sea-of-thoughts#readme",
   "dependencies": {
-    "express": "^4.17.1",
-    "socket-io": "^1.0.0"
+    "express": "^4.15.2",
+    "socket.io": "^2.3.0"
   }
 }
