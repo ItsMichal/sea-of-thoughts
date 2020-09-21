@@ -6,6 +6,16 @@
 
 A web application used to connect with people through small messages in a bottle. Throw your thoughts out to sea, and let someone read them and get connected with you. A novel way of mixing meditation, writing, and connection.
 
+## Features
+
+- A calming, relaxing, minimalist UI/UX in a single page webapp
+- Responsive design for multiple screen sizes
+- Send and receive messages in a bottle from other users currently online
+- Ability to play calming music and piano
+- ASMR sound effects when typing, sending and receiving bottles
+- Day/Night modes, which automatically detect and switch
+- Sea who else is in the sea of thoughts
+
 ### Please check the deployments bar on the right for a live example.
 
 # HackMIT2020 Project Link
@@ -21,6 +31,12 @@ A web application used to connect with people through small messages in a bottle
 # Directions
 
 Simply run `node app.js` on the webserver of your choice. Heroku button coming soon.
+
+## Notes
+
+- Responsive, but not yet 100% mobile-friendly
+- Would like to expand on back-end given more time
+- Done is approximately 12 hours straight from 9/19/2020 - 9/20/2020
 
 # Credit
 - Ocean Music - https://youtu.be/lnAT9hcVyo8
