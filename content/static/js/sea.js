@@ -169,23 +169,6 @@ function titleText(){
 
 }
 
-function changeColor() {
-  var getTime = new Date(); // for day/night cycle?
-  if(getTime.getHours() < 7 && getTime.getHours() > 20)
-  {
-    // background 
-    document.body.style.backgroundColor = "#101d73";
-  }
-  
-  else if(getTime.getHours() >= 7 && getTime.getHours() <= 20)
-  {
-    document.body.style.backgroundColor = "";
-    // #80d2ff
-  }
-}
-changeColor();
-setInterval(changeColor, 100000);
-
 //Buttons and stuff
 let writeButton;
 let sendButton;
@@ -271,7 +254,7 @@ var stars = [];
 
 function dayOrNight() {
   var getTime = new Date(); // for day/night cycle?
-  if(getTime.getHours() < 7 || getTime.getHours() > 20)
+  if(getTime.getHours() < 7 || getTime.getHours() > 19)
   {
     background(13, 17, 59);
     // background 
@@ -283,8 +266,6 @@ function dayOrNight() {
     circle((3*width)/4 - 35.3, height/6 + 35.3, 100);
     circle((3*width)/4 +10, height/6, 50);
     circle((3*width)/4 +20, height/6 + 20, 25);
-
-
 
     for (var i = 0; i < stars.length; i++) {
       stars[i].draw();
