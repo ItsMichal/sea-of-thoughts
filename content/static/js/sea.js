@@ -127,7 +127,7 @@ socket.on('incomingBottle', (bottle) => {
     //do something with the bottle
 
     //Random from left or right
-    let from_left = random(0,2) == 0; // 50/50 chance
+    let from_left = Math.floor(Math.random()*2) == 0; // 50/50 chance
     bottles.push(new OceanBottle(from_left, random(-50, 50), color(255), bottle));
   
 });
