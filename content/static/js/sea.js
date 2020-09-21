@@ -183,6 +183,7 @@ function changeColor() {
     // #80d2ff
   }
 }
+setInterval(changeColor, 100000);
 
 //Buttons and stuff
 let writeButton;
