@@ -183,6 +183,7 @@ function changeColor() {
     // #80d2ff
   }
 }
+changeColor();
 setInterval(changeColor, 100000);
 
 //Buttons and stuff
