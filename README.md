@@ -6,7 +6,7 @@
 
 A web application used to connect with people through small messages in a bottle. Throw your thoughts out to sea, and let someone read them and get connected with you. A novel way of mixing meditation, writing, and connection.
 
-[View it here.](http://sea-of-thoughts.herokuapp.com)
+### [View it here](http://sea-of-thoughts.herokuapp.com)
 
 ## Features
 
@@ -18,7 +18,6 @@ A web application used to connect with people through small messages in a bottle
 - Day/Night modes, which automatically detect and switch
 - Sea who else is in the sea of thoughts
 
-### Please check the deployments bar on the right or above for a live example.
 
 ## HackMIT2020 Project Link
 
