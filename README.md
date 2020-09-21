@@ -6,7 +6,7 @@
 
 A web application used to connect with people through small messages in a bottle. Throw your thoughts out to sea, and let someone read them and get connected with you. A novel way of mixing meditation, writing, and connection.
 
-### [View it here](http://sea-of-thoughts.herokuapp.com)
+### [View it here (HTTPS required)](https://sea-of-thoughts.herokuapp.com)
 
 ## Features
 
@@ -37,7 +37,8 @@ Simply run `node app.js` on the webserver of your choice. Heroku deploy button c
 
 - Responsive, but not yet 100% mobile-friendly
 - Would like to expand on back-end given more time
-- Done is approximately 12 hours straight from 9/19/2020 - 9/20/2020
+- Done in approximately 12 hours straight from 9/19/2020 - 9/20/2020
+- Https is required due to a [`p5.sound.js` restriction](https://github.com/processing/p5.js-sound/issues/409)
 
 ## Credit
 - Ocean Music - https://youtu.be/lnAT9hcVyo8
